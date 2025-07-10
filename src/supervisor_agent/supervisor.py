@@ -13,10 +13,13 @@ from langgraph.graph import MessagesState
 
 load_dotenv()
 
+# TODO: Replace with your own deployment URL or local URL if you're running langgraph dev 
+DEPLOYMENT_URL = "http://localhost:2024"
+
 llm = ChatOpenAI(model="gpt-4o")
     
-research_agent = RemoteGraph("research_agent", url="http://localhost:8002")
-analysis_agent = RemoteGraph("analysis_agent", url="http://localhost:8001")
+research_agent = RemoteGraph("research_agent", url=DEPLOYMENT_URL)
+analysis_agent = RemoteGraph("analysis_agent", url=DEPLOYMENT_URL)
 
 prompt = """
 You are a supervisor agent. You are responsible for coordinating the research and analysis agents.
