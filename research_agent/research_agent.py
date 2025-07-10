@@ -5,8 +5,7 @@ Deploy with: langgraph dev --port 8001
 from langchain_openai import ChatOpenAI
 from langchain_core.tools import tool
 from langgraph.prebuilt import create_react_agent
-from langgraph.types import StreamWriter
-from langgraph.pregel import get_stream_writer
+from langgraph.config import get_stream_writer
 
 @tool
 def google_search(query: str) -> str:
@@ -36,4 +35,5 @@ def academic_search(topic: str) -> str:
 # Create the agent
 llm = ChatOpenAI(model="gpt-4o")
 tools = [google_search, academic_search]
+
 graph = create_react_agent(llm, tools)

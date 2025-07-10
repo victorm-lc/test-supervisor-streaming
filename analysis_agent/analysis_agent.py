@@ -5,8 +5,9 @@ Deploy with: langgraph dev --port 8002
 from langchain_openai import ChatOpenAI
 from langchain_core.tools import tool
 from langgraph.prebuilt import create_react_agent
-from langgraph.types import StreamWriter
-from langgraph.pregel import get_stream_writer
+from langgraph.config import get_stream_writer
+from langgraph.graph import MessagesState
+
 
 @tool
 def market_analysis(company_or_sector: str) -> str:

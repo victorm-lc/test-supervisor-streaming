@@ -1,0 +1,8 @@
+{
+    "dependencies": ["."],
+    "graphs": {
+      "supervisor": "./supervisor.py:graph",
+      "supervisor_test_local": "./supervisor_test_local.py:graph"
+    },
+    "env": ".env"
+}
