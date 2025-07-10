@@ -1,10 +1,10 @@
 {
     "dependencies": ["."],
     "graphs": {
-      "supervisor": "./supervisor_agent/supervisor.py:graph",
-      "supervisor_test_local": "./supervisor_agent/supervisor_test_local.py:graph",
-      "research_agent": "./research_agent/research_agent.py:graph",
-      "analysis_agent": "./analysis_agent/analysis_agent.py:graph"
+      "supervisor": "./src/supervisor_agent/supervisor.py:graph",
+      "supervisor_test_local": "./src/supervisor_agent/supervisor_test_local.py:graph",
+      "research_agent": "./src/research_agent/research_agent.py:graph",
+      "analysis_agent": "./src/analysis_agent/analysis_agent.py:graph"
     },
     "env": ".env"
 }
