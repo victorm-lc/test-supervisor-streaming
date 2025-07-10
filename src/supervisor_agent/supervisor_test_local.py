@@ -84,29 +84,13 @@ analysis_agent = create_react_agent(
 )
 
 # Test create_supervisor with LOCAL agents
-try:
-    supervisor = create_supervisor(
-        model=llm,
-        agents=[research_agent, analysis_agent],
-        prompt="""
-        You are a supervisor agent. You are responsible for coordinating the research and analysis agents.
-        """,
-        add_handoff_back_messages=True
-    )
-    
-    graph = supervisor.compile()
-    print("✓ Successfully created supervisor with LOCAL agents")
-    print("This confirms that create_supervisor works with local agents")
-    
-except Exception as e:
-    print(f"✗ Failed to create supervisor with LOCAL agents: {e}")
-    print("This indicates a more fundamental issue with create_supervisor")
-    
-    # Document the error for comparison
-    with open("supervisor_local_error_log.txt", "w") as f:
-        f.write(f"Error creating supervisor with LOCAL agents:\n{str(e)}\n")
-        f.write(f"Error type: {type(e)}\n")
-        import traceback
-        f.write(f"Traceback:\n{traceback.format_exc()}\n")
-    
-    raise 
+supervisor = create_supervisor(
+    model=llm,
+    agents=[research_agent, analysis_agent],
+    prompt="""
+    You are a supervisor agent. You are responsible for coordinating the research and analysis agents.
+    """,
+    add_handoff_back_messages=True
+)
+
+graph = supervisor.compile()
