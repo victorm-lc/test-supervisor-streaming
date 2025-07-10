@@ -1,0 +1,9 @@
+{
+    "dependencies": ["."],
+    "graphs": {
+      "research_agent": "./research_agent.py:make_graph",
+      "analysis_agent": "./analysis_agent.py:make_graph",
+      "supervisor": "./test_supervisor_streaming.py:test_supervisor_with_remote_streaming"
+    },
+    "env": ".env"
+  }
