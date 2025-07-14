@@ -43,16 +43,28 @@ async def test_local_graph():
     print("\n📋 ALL STREAMING OUTPUT:")
     custom_events = []
     chunk_count = 0
-    async for mode, chunk in app.astream(
+    async for chunk in app.astream(
         {"messages": [{"role": "user", "content": "analyze the market"}]},
-        stream_mode=["custom", "debug"]
+        stream_mode=["custom", "debug"],
+        subgraphs=True
     ):
         chunk_count += 1
-        print(f"\n  [{chunk_count}] Mode: {mode}")
-        print(f"      Content: {chunk}")
-        
-        if mode == "custom":
-            custom_events.append(chunk)
+        # When using stream_mode with a list, chunk is a tuple of (mode, data)
+        if isinstance(chunk, tuple) and len(chunk) == 2:
+            mode, data = chunk
+            print(f"\n  [{chunk_count}] Mode: {mode}")
+            print(f"      Content: {data}")
+            
+            if mode == "custom":
+                custom_events.append(data)
+        else:
+            # Handle the (namespace, mode, data) format from subgraphs
+            print(f"\n  [{chunk_count}] Raw chunk: {chunk}")
+            if isinstance(chunk, tuple) and len(chunk) == 3:
+                namespace, mode, data = chunk
+                if mode == "custom":
+                    custom_events.append(data)
+                    print(f"      ✅ CUSTOM EVENT DETECTED!")
     
     print(f"\n📊 Summary: {chunk_count} total chunks streamed")
     if custom_events:
@@ -86,16 +98,28 @@ async def test_remote_graph():
         print("\n📋 ALL STREAMING OUTPUT:")
         custom_events = []
         chunk_count = 0
-        async for mode, chunk in app.astream(
+        async for chunk in app.astream(
             {"messages": [{"role": "user", "content": "research AI trends"}]},
-            stream_mode=["custom", "debug"]
+            stream_mode=["custom", "debug"],
+            subgraphs=True
         ):
             chunk_count += 1
-            print(f"\n  [{chunk_count}] Mode: {mode}")
-            print(f"      Content: {chunk}")
-            
-            if mode == "custom":
-                custom_events.append(chunk)
+            # When using stream_mode with a list, chunk is a tuple of (mode, data)
+            if isinstance(chunk, tuple) and len(chunk) == 2:
+                mode, data = chunk
+                print(f"\n  [{chunk_count}] Mode: {mode}")
+                print(f"      Content: {data}")
+                
+                if mode == "custom":
+                    custom_events.append(data)
+            else:
+                # Handle the (namespace, mode, data) format from subgraphs
+                print(f"\n  [{chunk_count}] Raw chunk: {chunk}")
+                if isinstance(chunk, tuple) and len(chunk) == 3:
+                    namespace, mode, data = chunk
+                    if mode == "custom":
+                        custom_events.append(data)
+                        print(f"      ✅ CUSTOM EVENT DETECTED!")
         
         print(f"\n📊 Summary: {chunk_count} total chunks streamed")
         if custom_events:
