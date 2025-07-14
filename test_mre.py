@@ -34,14 +34,14 @@ async def main():
     """Run the streaming test."""
     print("Testing custom event streaming...")
     print("=" * 50)
-    
-    # Stream with custom events - BEFORE FIX: No custom events appear!
+
+# Stream with custom events - BEFORE FIX: No custom events appear!
     custom_events = []
-    async for mode, chunk in app.astream(
-        {"messages": [{"role": "user", "content": "analyze the market"}]},
-        stream_mode=["custom", "updates"]
-    ):
-        if mode == "custom":
+async for mode, chunk in app.astream(
+    {"messages": [{"role": "user", "content": "analyze the market"}]},
+    stream_mode=["custom", "updates"]
+):
+    if mode == "custom":
             print(f"Custom event: {chunk}")
             custom_events.append(chunk)
     

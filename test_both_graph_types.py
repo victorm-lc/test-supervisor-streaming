@@ -45,7 +45,7 @@ async def test_local_graph():
     chunk_count = 0
     async for chunk in app.astream(
         {"messages": [{"role": "user", "content": "analyze the market"}]},
-        stream_mode=["custom", "debug"],
+        stream_mode=["custom", "updates"],
         subgraphs=True
     ):
         chunk_count += 1
@@ -100,7 +100,7 @@ async def test_remote_graph():
         chunk_count = 0
         async for chunk in app.astream(
             {"messages": [{"role": "user", "content": "research AI trends"}]},
-            stream_mode=["custom", "debug"],
+            stream_mode=["custom", "updates"],
             subgraphs=True
         ):
             chunk_count += 1
