@@ -1,3 +1,9 @@
+from langgraph_supervisor import create_supervisor
+from langgraph.prebuilt import create_react_agent
+from langchain_openai import ChatOpenAI
+from langchain_core.tools import tool
+from langgraph.config import get_stream_writer
+
 """
 Research Agent with stream_writer for custom events.
 Deploy with: langgraph dev --port 8001
@@ -42,4 +48,11 @@ def academic_search(topic: str) -> str:
 llm = ChatOpenAI(model="gpt-4o")
 tools = [google_search, academic_search]
 
-graph = create_react_agent(llm, tools)
+agent = create_react_agent(llm, tools, name="research_agent")
+
+    # Create supervisor
+supervisor = create_supervisor(
+        agents=[agent],
+        model=ChatOpenAI(model="gpt-4o"),
+    )
+app = supervisor.compile()

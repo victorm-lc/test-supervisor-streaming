@@ -2,7 +2,9 @@
     "dependencies": ["."],
     "graphs": {
       "research_agent": "./src/research_agent/research_agent.py:graph",
-      "analysis_agent": "./src/analysis_agent/analysis_agent.py:graph"
+      "analysis_agent": "./src/analysis_agent/analysis_agent.py:graph",
+      "local_supervisor_agent": "./src/supervisor_agent/local_supervisor.py:app",
+      "remote_supervisor_agent": "./src/supervisor_agent/remote_supervisor.py:app"
     },
     "env": ".env"
 }

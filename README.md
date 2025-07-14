@@ -1,54 +1,102 @@
 # LangGraph Supervisor Custom Event Streaming Issue
 
-This repository demonstrates an issue with `create_supervisor` in langgraph-supervisor where custom events from sub-agents are not forwarded to the parent stream.
+This repository demonstrates streaming issues with LangGraph 0.3.4 where custom events from RemoteGraphs are not properly streamed when using the documented `stream_subgraphs` parameter.
 
 ## The Problem
 
-When using `create_supervisor` with agents that emit custom events (via `stream_writer`), these events are lost because the supervisor uses `agent.invoke()` instead of `agent.astream()`. This affects:
+The Verizon team reported that when using RemoteGraphs with supervisors, custom events don't stream through when using the documented parameter `stream_subgraphs: true`. However, using the undocumented parameter `subgraphs: true` works as a workaround.
 
-- ❌ Custom events from tools
-- ❌ LLM token streaming  
-- ❌ Debug information
-- ❌ Both local graphs (create_react_agent) and RemoteGraphs
+## Testing the Issue
 
-## Quick Test
+### 1. Start LangGraph Dev Server
 
 ```bash
-# Install dependencies
+# Install dependencies with LangGraph 0.3.4
 uv sync
 
-# Test the issue with current langgraph-supervisor
-python test_mre.py
-# Output: ❌ No custom events received (this is the bug!)
-
-# Test both local and remote graphs
-python test_both_graph_types.py
+# Start the development server
+langgraph dev
 ```
+
+The server will start at `http://127.0.0.1:2024` and register these graphs:
+- `research_agent` - RemoteGraph for research tasks
+- `analysis_agent` - RemoteGraph for analysis tasks  
+- `local_supervisor_agent` - Local supervisor using create_supervisor
+- `remote_supervisor_agent` - Remote supervisor using create_supervisor
+
+### 2. Test Streaming via Postman/curl
+
+Use this curl command to test the streaming behavior:
+
+```bash
+curl --location 'http://127.0.0.1:2024/runs/stream' \
+--header 'X-Api-Key: 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' \
+--header 'Content-Type: application/json' \
+--data '{
+    "assistant_id": "remote_supervisor_agent",
+    "input": {
+        "messages": [
+            {
+                "type": "human",
+                "content": "research the number of academic papers on gaming"
+            }
+        ]
+    },
+    "stream_mode": [
+        "values",
+        "custom"
+    ],
+    "stream_subgraphs": true
+}'
+```
+
+### 3. Test the Workaround
+
+To test the undocumented workaround, change `stream_subgraphs` to `subgraphs`:
+
+```bash
+curl --location 'http://127.0.0.1:2024/runs/stream' \
+--header 'X-Api-Key: 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' \
+--header 'Content-Type: application/json' \
+--data '{
+    "assistant_id": "remote_supervisor_agent",
+    "input": {
+        "messages": [
+            {
+                "type": "human",
+                "content": "research the number of academic papers on gaming"
+            }
+        ]
+    },
+    "stream_mode": [
+        "values",
+        "custom"
+    ],
+    "subgraphs": true
+}'
+```
+
+## Expected Results
+
+- **With `stream_subgraphs: true`**: ❌ Custom events from RemoteGraphs are missing
+- **With `subgraphs: true`**: ✅ Custom events from RemoteGraphs stream correctly
 
 ## Repository Structure
 
 ```
-├── test_mre.py                    # Minimal reproducible example
-├── test_both_graph_types.py       # Test showing issue affects all graph types
-├── SUPERVISOR_CUSTOM_EVENTS_PR.md # PR description with proposed fix
 ├── src/                           # Example agents for testing
-│   ├── research_agent/           
-│   └── analysis_agent/           
-└── langgraph.json                # LangGraph configuration
+│   ├── research_agent/           # RemoteGraph research agent
+│   ├── analysis_agent/           # RemoteGraph analysis agent
+│   └── supervisor_agent/         # Local and remote supervisors
+├── langgraph.json                # LangGraph configuration
+└── test_streaming.py             # Streaming test script
 ```
 
-## The Fix
+## Issue Summary
 
-The proposed fix modifies `_make_call_agent` in langgraph-supervisor to use `agent.astream()` when available, forwarding all streaming modes to sub-agents. See `SUPERVISOR_CUSTOM_EVENTS_PR.md` for details.
+This demonstrates a critical API parameter naming issue in LangGraph 0.3.4:
+1. The documented `stream_subgraphs` parameter doesn't work for RemoteGraphs
+2. The undocumented `subgraphs` parameter works as a workaround
+3. This affects any team using RemoteGraphs with custom events in supervisors
 
-## Testing with LangGraph Server (Optional)
-
-If you want to test with RemoteGraphs:
-
-```bash
-# Start LangGraph server
-langgraph dev
-
-# In another terminal, run tests
-python test_both_graph_types.py
-```
+**✅ This issue has been fixed since LangGraph 0.5.0** - the `stream_subgraphs` parameter now works correctly. Teams using 0.3.4 need to use the `subgraphs` workaround until they can upgrade.
