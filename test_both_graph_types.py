@@ -39,19 +39,24 @@ async def test_local_graph():
     )
     app = supervisor.compile()
     
-    # Stream and collect custom events
+    # Stream and show ALL output
+    print("\n📋 ALL STREAMING OUTPUT:")
     custom_events = []
+    chunk_count = 0
     async for mode, chunk in app.astream(
         {"messages": [{"role": "user", "content": "analyze the market"}]},
-        stream_mode=["custom", "updates"]
+        stream_mode=["custom", "debug"]
     ):
+        chunk_count += 1
+        print(f"\n  [{chunk_count}] Mode: {mode}")
+        print(f"      Content: {chunk}")
+        
         if mode == "custom":
             custom_events.append(chunk)
     
+    print(f"\n📊 Summary: {chunk_count} total chunks streamed")
     if custom_events:
         print(f"✅ Received {len(custom_events)} custom events")
-        for event in custom_events:
-            print(f"   {event}")
     else:
         print("❌ No custom events received from LOCAL graph")
     
@@ -77,19 +82,24 @@ async def test_remote_graph():
         )
         app = supervisor.compile()
         
-        # Stream and collect custom events
+        # Stream and show ALL output
+        print("\n📋 ALL STREAMING OUTPUT:")
         custom_events = []
+        chunk_count = 0
         async for mode, chunk in app.astream(
             {"messages": [{"role": "user", "content": "research AI trends"}]},
-            stream_mode=["custom", "updates"]
+            stream_mode=["custom", "debug"]
         ):
+            chunk_count += 1
+            print(f"\n  [{chunk_count}] Mode: {mode}")
+            print(f"      Content: {chunk}")
+            
             if mode == "custom":
                 custom_events.append(chunk)
         
+        print(f"\n📊 Summary: {chunk_count} total chunks streamed")
         if custom_events:
             print(f"✅ Received {len(custom_events)} custom events")
-            for event in custom_events:
-                print(f"   {event}")
         else:
             print("❌ No custom events received from REMOTE graph")
         
