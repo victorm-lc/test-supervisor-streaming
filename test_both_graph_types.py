@@ -152,8 +152,6 @@ async def main():
     print("=" * 70)
     print(f"Local graph custom events:  {local_events} {'❌ BUG!' if local_events == 0 else '✅'}")
     print(f"Remote graph custom events: {remote_events if remote_events >= 0 else 'N/A'} {'❌ BUG!' if remote_events == 0 else '✅' if remote_events > 0 else ''}")
-    print("\nConclusion: The issue affects BOTH local and remote graphs!")
-    print("create_supervisor uses agent.invoke() which doesn't support streaming.")
 
 if __name__ == "__main__":
     asyncio.run(main()) 
