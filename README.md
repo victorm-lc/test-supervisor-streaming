@@ -30,7 +30,7 @@ Use this curl command to test the streaming behavior:
 
 ```bash
 curl --location 'http://127.0.0.1:2024/runs/stream' \
---header 'X-Api-Key: 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' \
+--header 'X-Api-Key: ...' \
 --header 'Content-Type: application/json' \
 --data '{
     "assistant_id": "remote_supervisor_agent",
@@ -56,7 +56,7 @@ To test the undocumented workaround, change `stream_subgraphs` to `subgraphs`:
 
 ```bash
 curl --location 'http://127.0.0.1:2024/runs/stream' \
---header 'X-Api-Key: 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' \
+--header 'X-Api-Key: ...' \
 --header 'Content-Type: application/json' \
 --data '{
     "assistant_id": "remote_supervisor_agent",
